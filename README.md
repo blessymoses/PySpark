@@ -1,8 +1,8 @@
 # Data Engineering using Apache Spark
 
-Spark uses two key components – a distributed file storage system, and a scheduler to manage workloads.
+Spark uses two key components – a distributed file storage system, and a cluster manager to manage workloads.
 
-## Spark schedulers
+## Spark Cluster Manager
 
 ### YARN
 - YARN is an application-level scheduler.
