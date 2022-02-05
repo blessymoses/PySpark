@@ -2,7 +2,7 @@
 
 Spark uses two key components – a distributed file storage system, and a scheduler to manage workloads.
 
-## Spark cluster managers
+## Spark schedulers
 
 ### YARN
 - YARN is an application-level scheduler.
