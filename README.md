@@ -2,8 +2,12 @@
 
 Spark uses two key components – a distributed file storage system, and a cluster manager to manage workloads.
 
-## Spark Cluster Manager
-
+## Spark Cluster Managers
+- local[n]
+- YARN
+- Kubernetes
+- Mesos
+- Standalone
 ### YARN
 - YARN is an application-level scheduler.
 - JVM-based cluster-manager of hadoop.
@@ -17,11 +21,9 @@ Spark uses two key components – a distributed file storage system, and a clust
   - YARN falls short in aspects such as version and dependency control, isolating jobs from each other, and optimal resource allocation.
   - In order to run multiple workloads you need dedicated clusters for each workload type.
   - Because YARN falls short with job isolation, it requires setting up and tearing down the cluster for every new job that needs to be run. This incurs costs, is an error prone process, and wastes compute resources. 
-
 ### Mesos
 - Mesos is an OS-level scheduler.
 - It reports on available resources and expects the framework to choose whether to execute the job or not.
-
 ### Kubernetes
 - decouples workloads from the infrastructure they are run on.
 - outperforms YARN at processing speeds.
@@ -41,3 +43,45 @@ Spark uses two key components – a distributed file storage system, and a clust
   - The Kubernetes ecosystem is blooming with powerful open source add-ons for management & monitoring. Prometheus for time-series data, Fluentd for log aggregation, and Grafana for data visualization are a few of the notable examples.
   - GitOps allows you to manage infrastructure and application deployments declaratively. Flux and Argo are two leading GitOps tools that enable this.
   - When it comes to set up, you can use Helm charts to install, manage, and version control packages and their dependencies.
+### local[n]
+- n: number of threads
+- n[1]: only one thread for Driver program
+- n[3]: one thread for Driver and 2 threads for Executors
+- local[*]: Run Spark locally with as many worker threads as logical cores on your machine.
+
+## Spark Execution Model
+### Spark execution methods
+- Interactive clients
+  - spark-shell
+  - Notebook
+- Submit job
+  - spark-submit, Rest API
+### Spark execution modes
+- Client mode
+  - spark-shell, Notebook
+    - Driver runs in the client machine
+    - Executors are started in the Spark Cluster
+    - Logging off from client machine kills driver as well as executors
+- Cluster mode
+  - Driver & executors run in the Spark Cluster
+  - Logging off from client machine does nit impact the submitted job
+
+## Spark Configurations
+- `spark.master`: specifies the Spark Cluster Manager
+- `spark.yarn.app.container.log.dir`: set this if you need a reference to the proper location to put log files in the YARN so that YARN can properly display and aggregate them
+  - This variable is used by YARN log aggregator to find the application log files
+  - log4j file appender will create log files in this directory
+- `spark.driver.extraJavaOptions`: A string of extra JVM options to pass to the driver.
+
+## Using Log4J with PySpark
+1. Create a Log4J configuration file
+2. Configure Spark JVM to pickup the Log4J configuration file
+3. Create a Python class to get Spark Log4J instance and use it
+### Log4J components
+1. Logger: set of APIs that are going to be used
+2. Configurations: are loaded at the runtime
+3. Appender: output destinations like console or log files
+
+## Spark Session
+- SparkSession is a singleton object.
+- Each spark application can have only one active SparkSession.
