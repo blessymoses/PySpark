@@ -67,6 +67,12 @@ Spark uses two key components – a distributed file storage system, and a clust
   - Logging off from client machine does nit impact the submitted job
 
 ## Spark Configurations
+`Spark application configuration precedence`:
+environment variable -> spark-defaults.conf -> spark-submit command line -> SparkConf
+
+All available spark application properties:
+https://spark.apache.org/docs/latest/configuration.html#application-properties
+
 - `spark.master`: specifies the Spark Cluster Manager
 - `spark.yarn.app.container.log.dir`: set this if you need a reference to the proper location to put log files in the YARN so that YARN can properly display and aggregate them
   - This variable is used by YARN log aggregator to find the application log files
@@ -85,3 +91,10 @@ Spark uses two key components – a distributed file storage system, and a clust
 ## Spark Session
 - SparkSession is a singleton object.
 - Each spark application can have only one active SparkSession.
+### Configuring Spark Session:
+1. Environment variables
+2. SPARK_HOME/conf/spark-defaults.conf
+3. spark-submit command line options
+4. SparkConf Object
+
+Section - 4, 22, 23
