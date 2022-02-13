@@ -118,9 +118,6 @@ $ tar xf spark-3.2.1-bin-hadoop2.7.tgz
 
 $ export SPARK_HOME=/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7
 ```
-  - apt-get install git
-  - wget spark tgz url
-  - move it to home
 - configure java home 
   - command to get the java home: /usr/libexec/java_home
   - export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
