@@ -97,4 +97,32 @@ https://spark.apache.org/docs/latest/configuration.html#application-properties
 3. spark-submit command line options
 4. SparkConf Object
 
-Section - 4, 22, 23
+# DataBricks Community Edition
+
+- Register in https://databricks.com/try-databricks
+
+## Installing Apache Spark
+- install jdk 8 or 11
+```sh
+# install java
+$ apt-get install default-jdk
+
+# find java_home in ubuntu
+$ update-alternatives --list java
+```
+- install spark
+```sh
+$ wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz
+
+$ tar xf spark-3.2.1-bin-hadoop2.7.tgz
+
+$ export SPARK_HOME=/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7
+```
+  - apt-get install git
+  - wget spark tgz url
+  - move it to home
+- configure java home 
+  - command to get the java home: /usr/libexec/java_home
+  - export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
+
+Section - 22, 23
