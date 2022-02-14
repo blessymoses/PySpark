@@ -109,6 +109,9 @@ $ apt-get install default-jdk
 
 # find java_home in ubuntu
 $ update-alternatives --list java
+
+# set JAVA_HOME
+$ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
 ```
 - install spark
 ```sh
@@ -117,9 +120,16 @@ $ wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz
 $ tar xf spark-3.2.1-bin-hadoop2.7.tgz
 
 $ export SPARK_HOME=/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7
+
+$ export PATH=$PATH:$SPARK_HOME/bin
+
+# $ export PYSPARK_PYTHON=python3
+
+# start a spark shell, :q to exit
+$ spark-shell
+
+# start a pyspark shell, ctrl+d to exut
+$ pyspark
 ```
-- configure java home 
-  - command to get the java home: /usr/libexec/java_home
-  - export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
 
 Section - 22, 23
