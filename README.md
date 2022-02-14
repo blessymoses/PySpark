@@ -97,10 +97,6 @@ https://spark.apache.org/docs/latest/configuration.html#application-properties
 3. spark-submit command line options
 4. SparkConf Object
 
-# DataBricks Community Edition
-
-- Register in https://databricks.com/try-databricks
-
 ## Installing Apache Spark
 - install jdk 8 or 11
 ```sh
@@ -113,7 +109,7 @@ $ update-alternatives --list java
 # set JAVA_HOME
 $ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
 ```
-- install spark
+- `To install spark`:
 ```sh
 $ wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz
 
@@ -130,6 +126,12 @@ $ spark-shell
 
 # start a pyspark shell, ctrl+d to exut
 $ pyspark
+```
+- `To use the PySpark which is included in the spark distribution`:
+  - Ensure that `SPARK_HOME` is set.
+  - Update PYTHONPATH environment variable such that it can find the PySpark and Py4J under `SPARK_HOME/python/lib`.
+```sh
+$ export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
 ```
 
 Section - 22, 23
