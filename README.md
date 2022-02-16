@@ -64,7 +64,7 @@ Spark uses two key components – a distributed file storage system, and a clust
     - Logging off from client machine kills driver as well as executors
 - Cluster mode
   - Driver & executors run in the Spark Cluster
-  - Logging off from client machine does nit impact the submitted job
+  - Logging off from client machine does not impact the submitted job
 
 ## Spark Configurations
 `Spark application configuration precedence`:
