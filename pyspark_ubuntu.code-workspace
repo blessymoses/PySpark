@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.linux": {
+			"JAVA_HOME": "/usr/lib/jvm/java-11-openjdk-arm64",
+			"SPARK_HOME": "/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7",
+			"PATH": "${env:PATH}:/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7/bin",
+			"PYTHONPATH": "/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7/python/lib/py4j-0.10.9.3-src.zip:/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7/python/lib/pyspark.zip:{env:PYTHONPATH}"
+		}
+	}
+}
