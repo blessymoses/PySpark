@@ -111,11 +111,11 @@ $ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
 ```
 - `To install spark`:
 ```sh
-$ wget https://dlcdn.apache.org/spark/spark-3.2.1/spark-3.2.1-bin-hadoop2.7.tgz
+$ wget https://dlcdn.apache.org/spark/spark-3.3.0/spark-3.3.0-bin-hadoop2.tgz
 
-$ tar xf spark-3.2.1-bin-hadoop2.7.tgz
+$ tar xf spark-3.3.0-bin-hadoop2.tgz
 
-$ export SPARK_HOME=/home/blessy/Downloads/spark-3.2.1-bin-hadoop2.7
+$ export SPARK_HOME=/home/codingfairy/sparkdist/spark-3.3.0-bin-hadoop2
 
 $ export PATH=$PATH:$SPARK_HOME/bin
 
@@ -124,7 +124,7 @@ $ export PATH=$PATH:$SPARK_HOME/bin
 # start a spark shell, :q to exit
 $ spark-shell
 
-# start a pyspark shell, ctrl+d to exut
+# start a pyspark shell, ctrl+d to exit
 $ pyspark
 ```
 - `To use the PySpark which is included in the spark distribution`:
