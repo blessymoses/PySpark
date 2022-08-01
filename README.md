@@ -133,5 +133,12 @@ $ pyspark
 ```sh
 $ export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
 ```
+- `bashrc`:
+```sh
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export SPARK_HOME=/home/codingfairy/sparkdist/spark-3.3.0-bin-hadoop2
+export PATH=$PATH:$SPARK_HOME/bin
+export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
+```
 
 Section - 22, 23
