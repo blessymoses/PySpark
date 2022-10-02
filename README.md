@@ -141,4 +141,39 @@ export PATH=$PATH:$SPARK_HOME/bin
 export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
 ```
 
+## HDFS
+- Data is stored in block size of 128MB and each block is replicated 3 times(configurable).
+- Atleast 2 data nodes are needed for replication.
+
+### Installing Hadoop - Single Node Hadoop Deployment
+- Download Hadoop from https://hadoop.apache.org/releases.html
+```sh
+wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4-src.tar.gz
+
+tar xzf hadoop-3.3.4-src.tar.gz
+```
+- A Hadoop environment is configured by editing a set of configuration files:
+
+  - bashrc
+  - hadoop-env.sh
+  - core-site.xml
+  - hdfs-site.xml
+  - mapred-site-xml
+  - yarn-site.xml
+- To configure Hadoop Environment Variables in bashrc:
+
+ `bashrc`:
+```sh
+# Hadoop configuration
+export HADOOP_HOME=/home/codingfairy/sparkdist/hadoop-3.3.4-src
+export HADOOP_INSTALL=$HADOOP_HOME
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
+export HADOOP_OPTS"-Djava.library.path=$HADOOP_HOME/lib/nativ"
+```
+
 Section - 22, 23
