@@ -148,9 +148,9 @@ export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*
 ### Installing Hadoop - Single Node Hadoop Deployment
 - Download Hadoop from https://hadoop.apache.org/releases.html
 ```sh
-wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4-src.tar.gz
+ wget https://dlcdn.apache.org/hadoop/common/hadoop-3.3.4/hadoop-3.3.4.tar.gz
 
-tar xzf hadoop-3.3.4-src.tar.gz
+tar xzf hadoop-3.3.4.tar.gz
 ```
 - A Hadoop environment is configured by editing a set of configuration files:
 
@@ -162,14 +162,19 @@ tar xzf hadoop-3.3.4-src.tar.gz
     - The core-site.xml file defines HDFS and Hadoop core properties.
     - To set up Hadoop in a pseudo-distributed mode, you need to specify the URL for your NameNode, and the temporary directory Hadoop uses for the map and reduce process.
   - hdfs-site.xml
+    - The properties in the hdfs-site.xml file govern the location for storing node metadata, fsimage file, and edit log file. Configure the file by defining the NameNode and DataNode storage directories.
+    - Additionally, the default dfs.replication value of 3 needs to be changed to 1 to match the single node setup.
   - mapred-site-xml
+    - define MapReduce values
+    - change the default MapReduce framework name value to yarn
   - yarn-site.xml
+    - The yarn-site.xml file is used to define settings relevant to YARN. It contains configurations for the Node Manager, Resource Manager, Containers, and Application Master.
 - To configure Hadoop Environment Variables in bashrc:
 
  `bashrc`:
 ```sh
 # Hadoop configuration
-export HADOOP_HOME=/home/codingfairy/sparkdist/hadoop-3.3.4-src
+export HADOOP_HOME=/home/codingfairy/sparkdist/hadoop-3.3.4
 export HADOOP_INSTALL=$HADOOP_HOME
 export HADOOP_MAPRED_HOME=$HADOOP_HOME
 export HADOOP_COMMON_HOME=$HADOOP_HOME
@@ -197,6 +202,64 @@ export $JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
   <value>hdfs://127.0.0.1:9000</value>
 </property>
 </configuration>
+```
+`hdfs-site.xml`:
+- $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+```xml
+<configuration>
+<property>
+  <name>dfs.data.dir</name>
+  <value>/home/codingfairy/hdoop/dfsdata/namenode</value>
+</property>
+<property>
+  <name>dfs.data.dir</name>
+  <value>/home/codingfairy/hdoop/dfsdata/datanode</value>
+</property>
+<property>
+  <name>dfs.replication</name>
+  <value>1</value>
+</property>
+</configuration>
+```
+`mapred-site.xml`:
+- $HADOOP_HOME/etc/hadoop/mapred-site.xml
+```xml
+<configuration> 
+<property> 
+  <name>mapreduce.framework.name</name> 
+  <value>yarn</value> 
+</property> 
+</configuration>
+```
+`yarn-site.xml`:
+- $HADOOP_HOME/etc/hadoop/yarn-site.xml
+```xml
+<configuration>
+<property>
+  <name>yarn.nodemanager.aux-services</name>
+  <value>mapreduce_shuffle</value>
+</property>
+<property>
+  <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+  <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+<property>
+  <name>yarn.resourcemanager.hostname</name>
+  <value>127.0.0.1</value>
+</property>
+<property>
+  <name>yarn.acl.enable</name>
+  <value>0</value>
+</property>
+<property>
+  <name>yarn.nodemanager.env-whitelist</name>   
+  <value>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PERPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME</value>
+</property>
+</configuration>
+```
+- Format HDFS NameNode
+```sh
+hdfs namenode -format
 ```
 
 
