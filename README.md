@@ -156,7 +156,11 @@ tar xzf hadoop-3.3.4-src.tar.gz
 
   - bashrc
   - hadoop-env.sh
+    - The hadoop-env.sh file serves as a master file to configure YARN, HDFS, MapReduce, and Hadoop-related project settings.
+    - When setting up a single node Hadoop cluster, you need to define which Java implementation is to be utilized.
   - core-site.xml
+    - The core-site.xml file defines HDFS and Hadoop core properties.
+    - To set up Hadoop in a pseudo-distributed mode, you need to specify the URL for your NameNode, and the temporary directory Hadoop uses for the map and reduce process.
   - hdfs-site.xml
   - mapred-site-xml
   - yarn-site.xml
@@ -175,5 +179,25 @@ export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
 export HADOOP_OPTS"-Djava.library.path=$HADOOP_HOME/lib/nativ"
 ```
+`hadoop-env.sh`:
+- Open $HADOOP_HOME/etc/hadoop/hadoop-env.sh and set $JAVA_HOME
+```sh
+export $JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+```
+`core-site.xml`:
+- $HADOOP_HOME/etc/hadoop/core-site.xml
+```xml
+<configuration>
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>/home/hdoop/tmpdata</value>
+</property>
+<property>
+  <name>fs.default.name</name>
+  <value>hdfs://127.0.0.1:9000</value>
+</property>
+</configuration>
+```
+
 
 Section - 22, 23
