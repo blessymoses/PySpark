@@ -182,12 +182,12 @@ export HADOOP_HDFS_HOME=$HADOOP_HOME
 export YARN_HOME=$HADOOP_HOME
 export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export PATH=$PATH:$HADOOP_HOME/sbin:$HADOOP_HOME/bin
-export HADOOP_OPTS"-Djava.library.path=$HADOOP_HOME/lib/nativ"
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/nativ"
 ```
 `hadoop-env.sh`:
 - Open $HADOOP_HOME/etc/hadoop/hadoop-env.sh and set $JAVA_HOME
 ```sh
-export $JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ```
 `core-site.xml`:
 - $HADOOP_HOME/etc/hadoop/core-site.xml
@@ -198,8 +198,16 @@ export $JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
   <value>/home/hdoop/tmpdata</value>
 </property>
 <property>
-  <name>fs.default.name</name>
+  <name>fs.defaultFS</name>
   <value>hdfs://127.0.0.1:9000</value>
+</property>
+<property>
+  <name>hadoop.proxyuser.hadoop.groups</name>
+  <value>*</value>
+</property>
+<property>
+  <name>hadoop.proxyuser.hadoop.hosts</name>
+  <value>*</value>
 </property>
 </configuration>
 ```
@@ -208,11 +216,11 @@ export $JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ```xml
 <configuration>
 <property>
-  <name>dfs.data.dir</name>
+  <name>dfs.namenode.name.dir</name>
   <value>/home/codingfairy/hdoop/dfsdata/namenode</value>
 </property>
 <property>
-  <name>dfs.data.dir</name>
+  <name>dfs.datanode.data.dir</name>
   <value>/home/codingfairy/hdoop/dfsdata/datanode</value>
 </property>
 <property>
@@ -261,6 +269,33 @@ export $JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ```sh
 hdfs namenode -format
 ```
+- Start Hadoop Cluster
 
+cd $HADOOP_HOME/sbin
 
-Section - 22, 23
+To start the NameNode and DataNode:
+```sh
+./start-dfs.sh
+```
+Once the namenode, datanodes, and secondary namenode are up and running, start the YARN resource and nodemanagers:
+```sh
+./start-yarn.sh
+```
+To check if all the daemons are active and running as Java processes:
+```sh
+jps
+
+4560 NameNode
+5123 ResourceManager
+5587 Jps
+4700 DataNode
+5247 NodeManager
+```
+To access Hadoop UI from browser: http://localhost:9870
+
+To access YARN Resource Manager: http://localhost:8088
+
+### Mapreduce
+- `MapReduce` is a way of sending computational tasks to a distributed file system.
+- A MapReduce job usually splits the input dataset into independent chunks which are processed by the `map tasks` in a completely parallel manner. The framework sorts the outputs of the maps, which are then input to the `reduce tasks`. Typically both the input and the output of the job are stored in a file system.
+
