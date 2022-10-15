@@ -107,7 +107,7 @@ $ apt-get install default-jdk
 $ update-alternatives --list java
 
 # set JAVA_HOME
-$ export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-arm64
+$ export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 ```
 - `To install spark`:
 ```sh
@@ -135,7 +135,7 @@ $ export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS
 ```
 - `bashrc`:
 ```sh
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 export SPARK_HOME=/home/codingfairy/sparkdist/spark-3.3.0-bin-hadoop2
 export PATH=$PATH:$SPARK_HOME/bin
 export PYTHONPATH=$(ZIPS=("$SPARK_HOME"/python/lib/*.zip); IFS=:; echo "${ZIPS[*]}"):$PYTHONPATH
@@ -187,7 +187,7 @@ export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/nativ"
 `hadoop-env.sh`:
 - Open $HADOOP_HOME/etc/hadoop/hadoop-env.sh and set $JAVA_HOME
 ```sh
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 ```
 `core-site.xml`:
 - $HADOOP_HOME/etc/hadoop/core-site.xml
@@ -295,7 +295,63 @@ To access Hadoop UI from browser: http://localhost:9870
 
 To access YARN Resource Manager: http://localhost:8088
 
-### Mapreduce
+### MapReduce
 - `MapReduce` is a way of sending computational tasks to a distributed file system.
 - A MapReduce job usually splits the input dataset into independent chunks which are processed by the `map tasks` in a completely parallel manner. The framework sorts the outputs of the maps, which are then input to the `reduce tasks`. Typically both the input and the output of the job are stored in a file system.
 
+## Hive
+### Installing Hive
+- Download Apache Hive
+```sh
+wget https://dlcdn.apache.org/hive/hive-3.1.3/apache-hive-3.1.3-bin.tar.gz
+
+tar xzf apache-hive-3.1.3-bin.tar.gz
+```
+- Configure Hive environment variables in bashrc
+  - Append the following Hive environment variables to the .`bashrc` file:
+```sh
+export HIVE_HOME="/home/codingfairy/sparkdist/apache-hive-3.1.3-bin"
+export PATH=$PATH:$HIVE_HOME/bin
+```
+- Edit hive-config.sh
+  - vi $HIVE_HOME/bin/hive-config.sh
+  - Add the HADOOP_HOME variable and the full path to your Hadoop directory:
+```sh
+export HADOOP_HOME=/home/codingfairy/sparkdist/hadoop-3.3.4
+```
+- Create Hive directories in HDFS
+  - Create two separate directories to store data in the HDFS layer:
+    - The temporary, tmp directory is going to store the intermediate results of Hive processes.
+    - The warehouse directory is going to store the Hive related tables
+  ```sh
+  hdfs dfs -mkdir /tmp
+  hdfs dfs -chmod g+w /tmp
+  hdfs dfs -ls /
+
+  hdfs dfs -mkdir -p /user/hive/warehouse
+  hdfs dfs -chmod g+w /user/hive/warehouse
+  hdfs dfs -ls /user/hive
+  ```
+- Configure hive-site.xml
+  - Use the hive-default.xml.template to create the hive-site.xml file:
+```sh
+cd $HIVE_HOME/conf
+cp hive-default.xml.template hive-site.xml
+```
+  - Add the following in hive-site.xml
+  ```xml
+  <property>
+    <name>system:java.io.tmpdir</name>
+    <value>/tmp/hive/java</value>
+  </property>
+  <property>
+    <name>system:user.name</name>
+    <value>${user.name}</value>
+  </property>
+  ```
+- Initiate Derby
+  - Apache Hive uses the Derby database to store metadata. 
+  - Initiate the Derby database, from the Hive bin directory using the `schematool` command:
+```sh
+$HIVE_HOME/bin/schematool -dbType derby -initSchema
+```
