@@ -63,6 +63,13 @@ automatically.
 - If you are running in local mode, this will be http://localhost:4040.
 - The Spark UI displays information on the state of your Spark jobs, its environment, and cluster state.
 - `A Spark job represents a set of transformations triggered by an individual action, and you can monitor that job from the Spark UI`.
+## DataFrames and SQL
+- `With Spark SQL, you can register any DataFrame as a table or view (a temporary table) and query it using pure SQL`. 
+- There is no performance difference between writing SQL queries or writing DataFrame code, they both “compile” to the same underlying plan that we specify in DataFrame code.
+- You can make any DataFrame into a table or view with one simple method call:
+df.`createOrReplaceTempView`("flight_data_2015_view")
+- The `execution plan is a directed acyclic graph (DAG) of transformations`,
+each resulting in a new immutable DataFrame, on which we call an action to generate a result.
 ```python
 myRange = spark.range(1000).toDF("number")
 
@@ -74,5 +81,61 @@ flight_data_2015 = spark.read.option("inferSchema", "true").option("header", "tr
 
 flight_data_2015.sort("count").explain() # call explain on any DataFrame object to see the DataFrame’s lineage (or how Spark will execute this query)
 
+flight_data_2015.sort("count").take(2)
+
+# By default, when we perform a shuffle, Spark outputs 200 shuffle partitions.
+# to reduce the number of the output partitions from the shuffle:
+spark.conf.set("spark.sql.shuffle.partitions", "5")
+
+flight_data_2015.createOrReplaceTempView("flight_data_2015_view")
+
+sqlWay = spark.sql("""
+SELECT DEST_COUNTRY_NAME, count(1)
+FROM flight_data_2015_view
+GROUP BY DEST_COUNTRY_NAME
+""")
+
+dataFrameWay = flight_data_2015.groupBy("DEST_COUNTRY_NAME").count()
+
+spark.sql("SELECT max(count) from flight_data_2015_view").take(1)
+
+from pyspark.sql.functions import max
+flight_data_2015.select(max("count")).take(1)
+
+maxSql = spark.sql("""
+SELECT DEST_COUNTRY_NAME, sum(count) as destination_total
+FROM flight_data_2015_view
+GROUP BY DEST_COUNTRY_NAME
+ORDER BY sum(count) DESC
+LIMIT 5
+""")
+
+from pyspark.sql.functions import desc
+flight_data_2015\
+.groupBy("DEST_COUNTRY_NAME")\
+.sum("count")\
+.withColumnRenamed("sum(count)", "destination_total")\
+.sort(desc("destination_total"))\
+.limit(5)\
+.show()
 ```
-p31
+# Structured API Overview
+- The Structured APIs are a tool for manipulating all sorts of data, from unstructured log files to semi-structured CSV files and highly structured Parquet files. 
+- These APIs refer to three core types of distributed collection APIs:
+  - Datasets
+  - DataFrames
+  - SQL tables and views
+## Schemas
+- A schema defines the column names and types of a DataFrame. 
+- You can define schemas manually or read a schema from a data source (often called `schema on read`).
+
+p56
+
+# Review
+- Spark is a distributed programming model in which the user specifies `transformations`. 
+- Multiple transformations build up a `directed acyclic graph` of instructions. 
+- An action begins the process of executing that graph of instructions, as a single job, by breaking it down into stages and tasks to execute across the cluster. 
+- The logical structures that we manipulate with transformations and actions
+are DataFrames and Datasets. 
+- To create a new DataFrame or Dataset, you call a `transformation`. 
+- To start computation or convert to native language types, you call an `action`.
