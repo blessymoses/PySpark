@@ -128,9 +128,79 @@ flight_data_2015\
 ## Schemas
 - A schema defines the column names and types of a DataFrame. 
 - You can define schemas manually or read a schema from a data source (often called `schema on read`).
+## Structured Spark Types
+- Internally, Spark uses an engine called `Catalyst` that maintains its own type information through the planning and processing of work.
+- Spark types map directly to the different language APIs that Spark maintains and there exists a lookup table for each of these in Scala, Java, Python, SQL, and R.
+- Even if we use Spark’s Structured APIs from Python or R, the majority of our manipulations will operate strictly on Spark types, not Python types.
+## DataFrames Versus Datasets
+- “untyped” DataFrames and the “typed” Datasets.
+- Spark maintains the DataFrame's types completely and only checks whether those types line up to those specified in the schema at `runtime`.
+- Datasets, on the other hand, check whether types conform to
+the specification at `compile time`. 
+- Datasets are only available to Java Virtual Machine (JVM)–based languages (Scala and Java) and we specify types with case classes or Java beans.
+- The `“Row” type` is Spark’s internal representation of its optimized
+in-memory format for computation. This format makes for highly specialized and efficient computation because rather than using JVM types, which can cause high garbage-collection and object instantiation costs, Spark can operate on its own internal format without incurring any of those costs. 
+- To Spark (in Python or R), there is no such thing as a Dataset: everything is a
+DataFrame and therefore we always operate on that optimized format.
+- `when you’re using DataFrames, you’re taking advantage of Spark’s
+optimized internal format`. This format applies the same efficiency gains to all of Spark’s language APIs.
+## Columns
+Columns represent a simple type like an integer or string, a complex type like an array or map, or a null value.
+## Rows
+- A row is nothing more than a record of data. Each record in a DataFrame must be of type Row
+- We can create these rows manually from
+SQL, from Resilient Distributed Datasets (RDDs), from data sources, or manually from scratch.
+## Python type reference
+| Data type | Value type in Python | API |
+| --- | --- | --- |
+| ByteType | int or long. numbers are within the range of –128 to 127. | ByteType() |
+| ShortType | int or long. numbers are within the range of –32768 to 32767. | ShortType() |
+| IntegerType | int or long. Python has a lenient definition of “integer.”. Numbers that are too large will be rejected by Spark SQL if you use the IntegerType(). It’s best practice to use LongType. | IntegerType() |
+| LongType | long. numbers are within the range of –9223372036854775808 to 9223372036854775807. Otherwise, convert data to decimal.Decimal and use DecimalType. | LongType() |
+| FloatType | float. Numbers will be converted to 4-byte single-precision floating-point numbers at runtime. | FloatType() |
+| DoubleType | float | DoubleType() |
+| DecimalType | decimal.Decimal | DecimalType() |
+| StringType | string | StringType() |
+| BinaryType | float | BinaryType() |
+| BooleanType | bool | BooleanType() |
+| TimestampType | datetime.datetime | TimestampType() |
+| DateType | datetime.date | DateType() |
+| ArrayType | list, tuple, or array | ArrayType(elementType, [containsNull]). Note: The default value of containsNull is True.() |
+| MapType | dict | MapType(keyType, valueType, [valueContainsNull]). Note: The default value of valueContainsNull is True. |
+| StructType | list or tuple | StructType(fields). Note: fields is a list of StructFields. Also, fields with the same name are not allowed. |
+| StructField | The value type in Python of the data type of this field (for example, Int for a StructField with the data type IntegerType) | StructField(name, dataType, [nullable]) Note: The default value of nullable is True. |
+## Structured API Execution
+Execution steps of a single structured API query from user code to executed
+code:
+1. Write DataFrame/Dataset/SQL Code.
+2. If valid code, Spark converts this to a `Logical Plan`.
+3. Spark transforms this Logical Plan to a `Physical Plan`, checking for optimizations along the way.
+4. Spark then executes this Physical Plan (RDD manipulations) on the cluster.
+- To execute code, we must write code. This code is then submitted to Spark either through the console or via a submitted job. This code then passes through the `Catalyst Optimizer, which decides how the code should be executed and lays out a plan for doing so` before, finally, the code is run and the result is returned to the user.
+### Logical Planning
+User code --> Unresolved logical plan --> (Analysis) Catalog --> Resolved logical plan --> (Logical optimization) --> Optimized logical plan
+- The first phase of execution is meant to take user code and convert it into a logical plan.
+- This plan is unresolved because although your code might be valid, the tables or columns that it refers to might or might not exist. 
+- Spark uses the `catalog`, a repository of all table and DataFrame information,to resolve columns and tables in the analyzer. 
+- The analyzer might reject the unresolved logical plan if the required table or column name does not exist in the catalog. 
+- If the analyzer can resolve it, the result is passed through the `Catalyst Optimizer`, `a collection of rules that attempt to optimize the logical plan by pushing down predicates or selections`.
+- Packages can extend the Catalyst to include their own rules for domain-specific optimizations.
+### Physical Planning
+- After successfully creating an optimized logical plan, Spark then begins the physical planning process. 
+- The physical plan, often called a `Spark plan, specifies how the logical plan will execute on the cluster by generating different physical execution strategies and comparing them through a cost model`.
+### Execution
+- Upon selecting a physical plan, Spark runs all of this code over RDDs, the lower-level programming interface of Spark.
+- Spark performs further optimizations at runtime, generating native Java bytecode that can remove entire tasks or stages during execution. 
+- Finally the result is returned to the user.
+```python
+df = spark.range(500).toDF("number")
+df.select(df["number"]+10)
 
-p56
+spark.range(2).collect()
 
+from pyspark.sql.types import *
+ b = ByteType()
+```
 # Review
 - Spark is a distributed programming model in which the user specifies `transformations`. 
 - Multiple transformations build up a `directed acyclic graph` of instructions. 
