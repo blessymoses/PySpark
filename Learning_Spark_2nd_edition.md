@@ -19,4 +19,7 @@ Apache Spark is a unified engine designed for large-scale distributed data proce
 - In an interactive Spark shell, the Spark driver instantiates a SparkSession for you, while in a Spark application, you create a SparkSession object yourself.
 ### Job
 - A parallel computation consisting of multiple tasks that gets spawned in response to a Spark action (e.g., save(), collect()).
-### 
+### Stage
+- Each job gets divided into smaller sets of tasks called stages that depend on each other.
+### Task
+- A single unit of work or execution that will be sent to a Spark executor.
