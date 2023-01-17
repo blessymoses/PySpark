@@ -38,8 +38,13 @@ modify it to do what you want. These instructions are called transformations.
 - Two types of transformations:
   - `Narrow transformations`: Transformations consisting of narrow dependencies are those for which each input partition will contribute to only one output partition.
     - With narrow transformations, Spark will automatically perform an operation called `pipelining`, meaning that if we specify multiple filters on DataFrames, they’ll all be performed in-memory.
+    - filter() and contains() represent narrow transformations because
+they can operate on a single partition and produce the resulting output partition
+without any exchange of data.
   - `Wide transformation`: A wide dependency style transformation will have input partitions contributing to many output partitions. This is referred to as a `shuffle` whereby Spark will exchange partitions across the cluster.
     - When we perform a shuffle, Spark writes the results to disk.
+    - groupBy() or orderBy() instruct Spark to perform wide transformations,
+where data from other partitions is read in, combined, and written to disk.
 ## Lazy Evaluation
 - Lazy evaulation means that Spark will wait until the very last moment to execute the graph of computation instructions. 
 - In Spark, instead of modifying the data immediately when you express
@@ -200,6 +205,10 @@ spark.range(2).collect()
 
 from pyspark.sql.types import *
  b = ByteType()
+
+strings = spark.read.text("README.md")
+filtered = strings.filter(strings.value.contains("Spark"))
+filtered.count()
 ```
 # Review
 - Spark is a distributed programming model in which the user specifies `transformations`. 
