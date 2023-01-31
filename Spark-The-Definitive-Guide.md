@@ -45,6 +45,9 @@ without any exchange of data.
     - When we perform a shuffle, Spark writes the results to disk.
     - groupBy() or orderBy() instruct Spark to perform wide transformations,
 where data from other partitions is read in, combined, and written to disk.
+    - The Spark SQL shuffle is a mechanism for redistributing or re-partitioning data so that the data is grouped differently across partitions
+    - Spark shuffle is a very expensive operation as it moves the data between executors or even between worker nodes in a cluster so try to avoid it when possible. When you have a performance issue on Spark jobs, you should look at the Spark transformations that involve shuffling.
+    - DataFrame operations that trigger shufflings are join(), and all aggregate functions.
 ## Lazy Evaluation
 - Lazy evaulation means that Spark will wait until the very last moment to execute the graph of computation instructions. 
 - In Spark, instead of modifying the data immediately when you express
@@ -53,6 +56,7 @@ some operation, you build up a `plan` of transformations that you would like to 
 - `predicate pushdown`:
   - If we build a large Spark job but specify a filter at the end that only requires us to fetch one row from our source data, the most efficient way to execute this is to access the single record that we need. 
   - Spark will actually optimize this for us by pushing the filter down
+  - Use the EXPLAIN command to see the query plan
 automatically.
 ## Actions
 - Transformations allow us to build up our logical transformation plan. 
