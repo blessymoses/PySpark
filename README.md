@@ -355,3 +355,37 @@ cp hive-default.xml.template hive-site.xml
 ```sh
 $HIVE_HOME/bin/schematool -dbType derby -initSchema
 ```
+
+## Hadoop-free Spark
+```sh
+# install java
+apt-get install default-jdk
+
+update-alternatives --list java
+
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64/jre
+
+wget https://archive.apache.org/dist/hadoop/core/hadoop-3.1.1/hadoop-3.1.1.tar.gz
+
+tar -xvf hadoop-3.1.1.tar.gz
+
+wget https://archive.apache.org/dist/spark/spark-3.2.1/spaCD k-3.2.1-bin-without-hadoop.tgz
+
+mv hadoop-3.1.1 hadoop
+mv spark-3.2.1-bin-without-hadoop spark
+
+export HADOOP_HOME=/opt/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native:$LD_LIBRARY_PATH
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib/native"
+
+export SPARK_HOME=/opt/spark
+
+export HIVE_HOME=/opt/hive
+export PATH=$PATH:$SPARK_HOME/bin
+export PATH=$PATH:$HIVE_HOME/bin
+
+export SPARK_DIST_CLASSPATH=$(hadoop classpath)
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+```
