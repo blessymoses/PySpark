@@ -389,3 +389,8 @@ export PATH=$PATH:$HIVE_HOME/bin
 export SPARK_DIST_CLASSPATH=$(hadoop classpath)
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ```
+
+## Spark Cheatsheet
+### Driver parameters
+- `spark.driver.memory`: default 1g, Limit of total size of serialized results of all partitions for each Spark action (e.g. collect) in bytes. Should be at least 1M, or 0 for unlimited. Jobs will be aborted if the total size is above this limit. Having a high limit may cause out-of-memory errors in driver (depends on spark.driver.memory and memory overhead of objects in JVM). Setting a proper limit can protect the driver from out-of-memory errors.
+- `spark.driver.memoryOverheadFactor`: default 0.10, Fraction of driver memory to be allocated as additional non-heap memory per driver process in cluster mode. This is memory that accounts for things like VM overheads, interned strings, other native overheads, etc. This tends to grow with the container size. This value defaults to 0.10 except for Kubernetes non-JVM jobs, which defaults to 0.40. This is done as non-JVM tasks need more non-JVM heap space and such tasks commonly fail with "Memory Overhead Exceeded" errors. This preempts this error with a higher default. This value is ignored if spark.driver.memoryOverhead is set directly.

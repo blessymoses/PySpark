@@ -222,3 +222,9 @@ filtered.count()
 are DataFrames and Datasets. 
 - To create a new DataFrame or Dataset, you call a `transformation`. 
 - To start computation or convert to native language types, you call an `action`.
+
+- Data engineering concepts
+  - High scalability: to scale HDFS horizontally when the data increase, add more data nodes
+  - High Availability: this is handled using replication factor; default is 3
+  - High latency: the system takes longer to respond; like MapReduce Batch jobs
+  - Low latency: near real-time response from the system; HBase is meant for quick searching. when you fire a query, you get the results immediately
